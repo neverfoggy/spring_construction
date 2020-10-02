@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sd="http://www.thymeleaf.org/spring-data"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+    <script th:href="@{/webjars/jquery/3.4.0/jquery.min.js} "></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a sec:authentication="principal.name" class="navbar-brand" href="#"> </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <ul class="navbar-nav ml-auto ">
+            <li><a class="nav-item nav-link " th:href="@{/logout}">Выйти из аккаунта</a></li>
+        </ul>
+    </div>
+</nav>
+<!--/*@thymesVar id="tosklad" type="com.kursach.model.AttrDTO"*/-->
+<!--@thymesVar id="id" type="java.lang.Long"-->
+<!--@thymesVar id="name" type="java.lang.String"-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6" sd:page-object="${elemtype}" sd:pagination-qualifier="first">
+            <div class="card m-3" >
+                <div class="card-body">
+                    <h5 class="card-title">Таблица с типами  <form  action="#" th:action="@{/elemtype}"  method="post">
+                        <input type="text" class="form-control m-2 " placeholder="Введите название" aria-describedby="inputGroup-sizing-sm" th:id="name" th:name="name" >
+                        <button class="btn btn-dark ml-2" type="submit"> Добавить</button>
+                    </form></h5>
+
+                    <table class="table table-striped table-hover">
+
+                        <thead>
+                        <tr>
+                            <th ><a class="sorted" sd:pagination-sort="id">Номер элемента</a></th>
+                            <th><a class="sorted" sd:pagination-sort="name" >Значение</a></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="elem: ${elemtype}">
+                            <td class="text-monospace" th:text="${elem.getId()}"></td>
+                            <td class="text-monospace" th:text="${elem.getName()}"></td>
+                            <td class="text-monospace"><a th:href="@{/elemtypedel(id=${elem.getId()})}">Удалить</a></td>
+                        </tr>
+
+                        </tr>
+                        </tbody>
+
+                    </table>
+                    <nav>
+                        <ul class="pagination" sd:pagination="full">
+                            <!-- Pagination created by SpringDataDialect, this content is just for mockup -->
+                            <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+                            <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+                        </ul>
+
+                    </nav>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6"sd:page-object="${elements}" sd:pagination-qualifier="second">
+            <div class="card m-3 ">
+                <div class="card-body">
+                    <h5 class="card-title">Таблица с элементами  <form  action="#" th:action="@{/elem}"  method="post">
+                        <input type="text" class="form-control m-2 " placeholder="Введите название" aria-describedby="inputGroup-sizing-sm" th:id="name" th:name="name" >
+                        <input type="text" class="form-control m-2 " placeholder="Введите id типа элемента" aria-describedby="inputGroup-sizing-sm" th:id="elem_type_id" th:name="elem_type_id" >
+                        <button class="btn btn-dark ml-2" type="submit"> Добавить</button>
+                    </form></h5>
+                    <table class="table table-striped table-hover">
+
+                        <thead>
+                        <tr>
+                            <th><a class="sorted" sd:pagination-sort="id" >id</a></th>
+                            <th><a class="sorted" sd:pagination-sort="name">Значение</a></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="elem: ${elements}">
+                            <td class="text-monospace" th:text="${elem.id}"></td>
+                            <td class="text-monospace" th:text="${elem.name}"></td>
+                            <td class="text-monospace"><a th:href="@{/elemdel(id=${elem.getId()})}">Удалить</a></td>
+                        </tr>
+                        </tbody>
+
+                    </table>
+                    <nav>
+                        <ul class="pagination" sd:pagination="full">
+                            <!-- Pagination created by SpringDataDialect, this content is just for mockup -->
+                            <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+                            <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6" sd:page-object="${elements_attribute}" sd:pagination-qualifier="third">
+            <div class="card m-3" >
+                <div class="card-body">
+                    <h5 class="card-title">Таблица с типами элементов <form  action="#" th:action="@{/elemattr}"  method="post">
+                        <input type="text" class="form-control m-2 " placeholder="Введите название" aria-describedby="inputGroup-sizing-sm" th:id="name" th:name="name" >
+                        <input type="text" class="form-control m-2 " placeholder="Введите id элемента" aria-describedby="inputGroup-sizing-sm" th:id="elem_id" th:name="elem_id" >
+                        <button class="btn btn-dark ml-2" type="submit"> Добавить</button>
+                    </form></h5>
+                    <table class="table table-striped table-hover">
+
+                        <thead>
+                        <tr>
+                            <th ><a class="sorted" sd:pagination-sort="id">Номер элемента</a></th>
+                            <th><a class="sorted" sd:pagination-sort="name_attr" >Значение</a></th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="elem: ${elements_attribute}">
+                            <td class="text-monospace" th:text="${elem.id}"></td>
+                            <td class="text-monospace" th:text="${elem.name}"></td>
+                            <td class="text-monospace"><a th:href="@{/elemattrdel(id=${elem.getId()})}">Удалить</a></td>
+                        </tr>
+                        </tbody>
+
+                    </table>
+                    <nav>
+                        <ul class="pagination" sd:pagination="full">
+                            <!-- Pagination created by SpringDataDialect, this content is just for mockup -->
+                            <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+                            <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6"sd:page-object="${attr_values}" sd:pagination-qualifier="forth">
+            <div class="card m-3 ">
+                <div class="card-body">
+                    <h5 class="card-title">Таблица со значениями типов элементов <form  action="#" th:action="@{/elemattrvalues}"  method="post">
+                        <input type="text" class="form-control m-2 " placeholder="Введите значение элемента" aria-describedby="inputGroup-sizing-sm" th:id="value" th:name="value" >
+                        <input type="text" class="form-control m-2 " placeholder="Введите тип, для которго вводится значение" aria-describedby="inputGroup-sizing-sm" th:id="attr_id" th:name="attr_id" >
+                        <button class="btn btn-dark ml-2" type="submit"> Добавить</button>
+                    </form></h5>
+                    <table class="table table-striped table-hover">
+
+                        <thead>
+                        <tr>
+                            <th><a class="sorted" sd:pagination-sort="id" >id</a></th>
+                            <th><a class="sorted" sd:pagination-sort="value">Название объекта</a></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="elem: ${attr_values}">
+                            <td class="text-monospace" th:text="${elem.id}"></td>
+                            <td class="text-monospace" th:text="${elem.value}"></td>
+                            <td class="text-monospace"><a th:href="@{/attrdel(id=${elem.getId()})}">Удалить</a></td>
+                        </tr>
+                        </tbody>
+
+                    </table>
+                    <nav>
+                        <ul class="pagination" sd:pagination="full">
+                            <!-- Pagination created by SpringDataDialect, this content is just for mockup -->
+                            <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+                            <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

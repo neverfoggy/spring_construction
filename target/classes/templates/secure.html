@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sd="http://www.thymeleaf.org/spring-data"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title>secure</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+    <script th:href="@{/webjars/jquery/3.4.0/jquery.min.js} "></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a sec:authentication="principal.name" class="navbar-brand" href="#">Navbar</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <ul class="navbar-nav ml-auto ">
+
+            <li sec:authorize="hasAnyRole('ROLE_ADMIN')"><a class="nav-item nav-link ml-auto" th:href="@{/sklad}">Перейти на склад</a></li>
+            <li><a class="nav-item nav-link " th:href="@{/logout}">Выйти из аккаунта</a></li>
+        </ul>
+    </div>
+</nav>
+<!--/*@thymesVar id="command" type="com.kursach.model.MasterDTO"*/-->
+<!--@thymesVar id="id" type="java.lang.Long"-->
+<!--@thymesVar id="buildName" type="java.lang.String"-->
+    <!--@thymesVar id="arrayId" type="java.util.ArrayList<java.lang.Long>"-->
+    <!--@thymesVar id="arrayValue" type="java.util.ArrayList<java.lang.Short>"-->
+<!--@thymesVar id="req_id" type="java.lang.Long"-->
+<div class="row">
+<div class="col-md-6">
+    <div class="card m-3" >
+        <div class="card-body">
+            <h5 class="card-title">Оформление заявки</h5>
+<form action = "#" th:action="@{/add}" th:object="${command}" method = "post">
+                    <label for="id">Выберете, кому предназначается заявка</label>
+    <select class="form-control" id = "id" name="id" th:value="${id}">
+        <option th:each="i: ${depts}"
+                th:value="${i.getId()}"
+                th:text="${i.getName()}">
+        </option>
+    </select>
+    <br>
+    <label for="buildName">Название строительного объекта</label>
+    <input type="text" class="form-control" id="buildName" th:id="buildName" th:name="buildName">
+    <br>
+    <label for="elements"><b>Выберете нужные элементы</b></label>
+
+    <br>
+    <div th:each="elements_type: ${elemstype}"} id="elements">
+        <div th:text="${elements_type.getName()}"></div>
+        <ul class="list-group list-group-flush" style="list-style: none;">
+            <li class="list-group-item" th:each="element: ${elems}"th:if="${elements_type.getId()} == ${element.getDaoElementTypeId()}" >
+                <div th:text="${element.getName()}" th:value="${element.getId()}"></div>
+                <ul class="list-group list-group-flush" style="list-style: none;">
+                    <li class="list-group-item" th:each="attributes: ${attr}" th:if="${element.getId()} == ${attributes.getDaoElementId()}" >
+                       <div th:text="${attributes.getName()}" th:field="${attributes.getName()}"></div>
+                        <ul class="list-group list-group-flush" style="list-style: none;">
+                            <li class="list-group-item" th:each="attr_value: ${attr_values}"
+                                th:if="${attributes.getId()} == ${attr_value.getDaoElemAttributesId()}" >
+                                <input type="checkbox" class="form-check-input position-static" th:id="arrayId" th:name="arrayId"  th:value="${attr_value.getId()}">
+                                <label th:for="${attr_value}"
+                                       th:text="${attr_value.getValue()}"></label>
+                                <input type="text" class="form-control" th:id="arrayValue" th:name="arrayValue" placeholder="Введите количество">
+                                </li>
+
+
+
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+                <input type="hidden" th:id="req_id" th:name="req_id" th:value="${last_id.getId()}">
+    <input type="submit" class="btn btn-primary" value="Submit" /> <input class="btn btn-secondary"   type="reset" value="Reset" />
+</form>
+        </div>
+    </div>
+</div>
+
+
+<div class="col-md-6">
+    <div class="card m-3" >
+        <div class="card-body">
+            <h5 class="card-title">Текущие заявки и их статус</h5>
+
+    <table class="table table-striped table-hover">
+        <form action="#" th:action="@{/filter}" th:object="${filter}" method="post">
+            <!--/*@thymesVar id="filter" type="com.kursach.model.DAORequest"*/-->
+            <!--@thymesVar id="id" type="java.lang.Long"-->
+            <!--@thymesVar id="build" type="java.lang.String"-->
+            <label for="id"> Фильтрация по id</label>
+            <input class="form-control" type="text" id="id" th:id="id", th:name="id">
+            <br>
+            <label for="build"> Фильтрация по названию строительного объекта</label>
+            <input class="form-control" type="text" id="build" th:id="build" th:name="build">
+            <br>
+            <button class="btn btn-secondary" type="submit">
+                Отфильтровать!
+            </button>
+
+        </form>
+
+        <thead>
+        <tr>
+            <th><a class="sorted" sd:pagination-sort="id" >id</a></th>
+            <th><a class="sorted" sd:pagination-sort="build">Название объекта</a></th>
+            <th><a class="sorted" sd:pagination-sort="ready">Готовность</a></th>
+            <th><a class="sorted" sd:pagination-sort="date">Время создания</a></th>
+            <th></th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="req: ${request}">
+            <td  class="text-monospace" th:text="${req.getId()}"></td>
+            <td  class="text-monospace" th:text="${req.getBuild()}"></td>
+            <td  class="text-monospace"th:text="${req.getReady()} ? 'Готов' : 'Не готов'"></td>
+            <td  class="text-monospace" th:text="${req.getCreationDateTime()}"></td>
+            <td  class="text-monospace"><a th:href="@{/reqelem(id=${req.getId()})}">Просмотреть</a></td>
+        </tr>
+        </tbody>
+    </table>
+            <div class="row">
+
+        </div>
+            <nav class="col-lg-1 col-centered">
+                <ul class="pagination" sd:pagination="full">
+                    <!-- Pagination created by SpringDataDialect, this content is just for mockup -->
+                    <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+                    <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+</div>
+
+<!--    <div class="pagination-div">-->
+<!--    <span th:if="${allMaster.hasPrevious()}">-->
+<!--        <a th:href="@{/user(page=${allMaster.number-1},size=${allMaster.size})}">Previous</a>-->
+<!--    </span>-->
+<!--        <th:block th:each="i: ${#numbers.sequence(0, allMaster.totalPages - 1)}">-->
+<!--            <span th:if="${allMaster.number == i}" class="selected">[[${i}+1]]</span>-->
+<!--            <span th:unless="${allMaster.number == i}">-->
+<!--             <a th:href="@{/user(page=${i},size=${allMaster.size})}">[[${i}+1]]</a>-->
+<!--        </span>-->
+<!--        </th:block>-->
+<!--        <span th:if="${allMaster.hasNext()}">-->
+<!--        <a th:href="@{/user(page=${allMaster.number+1},size=${allMaster.size})}">Next</a>-->
+<!--    </span>-->
+<!--    </div>-->
+
+
+
+</body>
+</html>

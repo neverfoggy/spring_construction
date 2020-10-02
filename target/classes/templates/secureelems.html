@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sd="http://www.thymeleaf.org/spring-data"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+    <script th:href="@{/webjars/jquery/3.4.0/jquery.min.js} "></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a sec:authentication="principal.name" class="navbar-brand" href="#">Navbar</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <ul class="navbar-nav ml-auto ">
+            <li><a class="nav-item nav-link " th:href="@{/logout}">Выйти из аккаунта</a></li>
+        </ul>
+    </div>
+</nav>
+<table class="table table-striped table-hover">
+    <thead>
+    <tr>
+        <th>Название элемента</th>
+        <th>Тип атрибута</th>
+        <th><a class="sorted" sd:pagination-sort="amount">Количество</a></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="req: ${reqelems}">
+        <td th:text="${#lists.toList(req).get(0)}"></td>
+        <td th:text="${#lists.toList(req).get(1)}"></td>
+        <td th:text="${#lists.toList(req).get(2)}"></td>
+    </tr>
+    </tbody>
+</table>
+<div class="row">
+    <div class="col-sm-6">
+        <div sd:pagination-summary="">info</div>
+    </div>
+    <div class="col-sm-6">
+        <nav class="pull-right">
+            <ul class="pagination" sd:pagination-split="7" sd:pagination="full">
+                <!-- Pagination created by SpringDataDialect, this content is just for mockup -->
+                <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+                <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+            </ul>
+        </nav>
+    </div>
+
+</div>
+</body>
+</html>
